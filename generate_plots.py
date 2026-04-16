@@ -8,7 +8,6 @@ Usage
 -----
     python generate_plots.py
 """
-
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -49,18 +48,43 @@ def generate_data(seed):
     return sensor_a, sensor_b, timestamps
 
 
+def plot_scatter(sensor_a, sensor_b, timestamps, ax):
+    """Draw scatter plot of sensor readings over time on an Axes object.
+    
+    Creates a scatter plot showing temperature readings from two sensors
+    as a function of time. Sensor A is colored blue and Sensor B is colored
+    orange. The plot includes axis labels, legend, and grid.
+    
+    Parameters
+    ----------
+    sensor_a : ndarray
+        Shape (200,), float64. Temperature readings from Sensor A in Celsius.
+    sensor_b : ndarray
+        Shape (200,), float64. Temperature readings from Sensor B in Celsius.
+    timestamps : ndarray
+        Shape (200,), float64. Time values in seconds.
+    ax : matplotlib.axes.Axes
+        The Axes object to draw on. Modified in place.
+    
+    Returns
+    -------
+    None
+    """
+    ax.scatter(timestamps, sensor_a, color='blue', label='Sensor A', alpha=0.6, s=30)
+    ax.scatter(timestamps, sensor_b, color='orange', label='Sensor B', alpha=0.6, s=30)
+    ax.set_xlabel('Time (seconds)')
+    ax.set_ylabel('Temperature (°C)')
+    ax.set_title('Temperature Readings from Two Sensors')
+    ax.legend()
+    ax.grid(True, alpha=0.3)
+
+
 # Generate synthetic data for two sensors and timestamps
 sensor_a, sensor_b, timestamps = generate_data(seed=6942)
 
 # Generate and save scatter plot over time
-plt.figure(figsize=(10, 6))
-plt.scatter(timestamps, sensor_a, color='blue', label='Sensor A', alpha=0.6, s=30)
-plt.scatter(timestamps, sensor_b, color='orange', label='Sensor B', alpha=0.6, s=30)
-plt.xlabel('Time (seconds)')
-plt.ylabel('Temperature (°C)')
-plt.title('Temperature Readings from Two Sensors')
-plt.legend()
-plt.grid(True, alpha=0.3)
+fig, ax = plt.subplots(figsize=(10, 6))
+plot_scatter(sensor_a, sensor_b, timestamps, ax)
 plt.savefig('scatter_plot.png', dpi=300, bbox_inches='tight')
 plt.close()
 

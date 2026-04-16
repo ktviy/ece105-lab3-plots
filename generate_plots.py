@@ -143,25 +143,40 @@ def plot_boxplot(sensor_a, sensor_b, ax):
     ax.grid(True, alpha=0.3, axis='y')
 
 
-# Generate synthetic data for two sensors and timestamps
-sensor_a, sensor_b, timestamps = generate_data(seed=6942)
+def main():
+    """Generate and save publication-quality sensor data visualizations.
+    
+    Generates synthetic temperature sensor data and creates a composite figure
+    containing three subplots: a scatter plot of readings over time, a histogram
+    of the temperature distributions, and a box plot comparing the two sensors.
+    The figure is saved as a single PNG file.
+    
+    Returns
+    -------
+    None
+    """
+    # Generate synthetic data for two sensors and timestamps
+    sensor_a, sensor_b, timestamps = generate_data(seed=6942)
+    
+    # Create a 1x3 subplot figure
+    fig, axes = plt.subplots(1, 3, figsize=(18, 5))
+    
+    # Generate and populate scatter plot
+    plot_scatter(sensor_a, sensor_b, timestamps, axes[0])
+    
+    # Generate and populate histogram
+    plot_histogram(sensor_a, sensor_b, axes[1])
+    
+    # Generate and populate box plot
+    plot_boxplot(sensor_a, sensor_b, axes[2])
+    
+    # Adjust layout and save
+    plt.tight_layout()
+    plt.savefig('sensor_analysis.png', dpi=150, bbox_inches='tight')
+    plt.close()
+    
+    print("Plots generated and saved as sensor_analysis.png!")
 
-# Generate and save scatter plot over time
-fig, ax = plt.subplots(figsize=(10, 6))
-plot_scatter(sensor_a, sensor_b, timestamps, ax)
-plt.savefig('scatter_plot.png', dpi=300, bbox_inches='tight')
-plt.close()
 
-# Generate and save histogram of sensor readings
-fig, ax = plt.subplots(figsize=(10, 6))
-plot_histogram(sensor_a, sensor_b, ax)
-plt.savefig('histogram.png', dpi=300, bbox_inches='tight')
-plt.close()
-
-# Generate and save box plot comparing the two sensors distributions
-fig, ax = plt.subplots(figsize=(10, 6))
-plot_boxplot(sensor_a, sensor_b, ax)
-plt.savefig('box_plot.png', dpi=300, bbox_inches='tight')
-plt.close()
-
-print("Plots generated and saved successfully!")
+if __name__ == '__main__':
+    main()

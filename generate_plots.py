@@ -79,6 +79,70 @@ def plot_scatter(sensor_a, sensor_b, timestamps, ax):
     ax.grid(True, alpha=0.3)
 
 
+def plot_histogram(sensor_a, sensor_b, ax):
+    """Draw overlaid histogram of sensor temperature distributions on an Axes object.
+    
+    Creates histograms comparing the temperature distributions of two sensors.
+    Sensor A is colored blue and Sensor B is colored orange with 50% transparency.
+    Vertical dashed lines indicate the mean of each sensor.
+    
+    Parameters
+    ----------
+    sensor_a : ndarray
+        Shape (200,), float64. Temperature readings from Sensor A in Celsius.
+    sensor_b : ndarray
+        Shape (200,), float64. Temperature readings from Sensor B in Celsius.
+    ax : matplotlib.axes.Axes
+        The Axes object to draw on. Modified in place.
+    
+    Returns
+    -------
+    None
+    """
+    ax.hist(sensor_a, bins=30, alpha=0.5, label='Sensor A', color='blue')
+    ax.hist(sensor_b, bins=30, alpha=0.5, label='Sensor B', color='orange')
+    ax.axvline(sensor_a.mean(), color='blue', linestyle='--', linewidth=2, 
+               label=f'Sensor A Mean: {sensor_a.mean():.2f}°C')
+    ax.axvline(sensor_b.mean(), color='orange', linestyle='--', linewidth=2, 
+               label=f'Sensor B Mean: {sensor_b.mean():.2f}°C')
+    ax.set_xlabel('Temperature (°C)')
+    ax.set_ylabel('Frequency')
+    ax.set_title('Temperature Distribution Comparison')
+    ax.legend()
+    ax.grid(True, alpha=0.3)
+
+
+def plot_boxplot(sensor_a, sensor_b, ax):
+    """Draw side-by-side box plot comparing sensor distributions on an Axes object.
+    
+    Creates a box plot showing the distribution statistics (median, quartiles,
+    range) for each sensor. A horizontal dashed line indicates the overall mean
+    of both sensors combined.
+    
+    Parameters
+    ----------
+    sensor_a : ndarray
+        Shape (200,), float64. Temperature readings from Sensor A in Celsius.
+    sensor_b : ndarray
+        Shape (200,), float64. Temperature readings from Sensor B in Celsius.
+    ax : matplotlib.axes.Axes
+        The Axes object to draw on. Modified in place.
+    
+    Returns
+    -------
+    None
+    """
+    ax.boxplot([sensor_a, sensor_b], labels=['Sensor A', 'Sensor B'])
+    overall_mean = np.mean(np.concatenate([sensor_a, sensor_b]))
+    ax.axhline(overall_mean, color='red', linestyle='--', linewidth=2, 
+               label=f'Overall Mean: {overall_mean:.2f}°C')
+    ax.set_xlabel('Sensor')
+    ax.set_ylabel('Temperature (deg C)')
+    ax.set_title('Temperature Distribution Comparison: Box Plot')
+    ax.legend()
+    ax.grid(True, alpha=0.3, axis='y')
+
+
 # Generate synthetic data for two sensors and timestamps
 sensor_a, sensor_b, timestamps = generate_data(seed=6942)
 
@@ -89,30 +153,15 @@ plt.savefig('scatter_plot.png', dpi=300, bbox_inches='tight')
 plt.close()
 
 # Generate and save histogram of sensor readings
-plt.figure(figsize=(10, 6))
-plt.hist(sensor_a, bins=30, alpha=0.5, label='Sensor A', color='blue')
-plt.hist(sensor_b, bins=30, alpha=0.5, label='Sensor B', color='orange')
-plt.axvline(sensor_a.mean(), color='blue', linestyle='--', linewidth=2, label=f'Sensor A Mean: {sensor_a.mean():.2f}°C')
-plt.axvline(sensor_b.mean(), color='orange', linestyle='--', linewidth=2, label=f'Sensor B Mean: {sensor_b.mean():.2f}°C')
-plt.xlabel('Temperature (°C)')
-plt.ylabel('Frequency')
-plt.title('Temperature Distribution Comparison')
-plt.legend()
-plt.grid(True, alpha=0.3)
+fig, ax = plt.subplots(figsize=(10, 6))
+plot_histogram(sensor_a, sensor_b, ax)
 plt.savefig('histogram.png', dpi=300, bbox_inches='tight')
 plt.close()
 
 # Generate and save box plot comparing the two sensors distributions
-plt.figure(figsize=(10, 6))
-plt.boxplot([sensor_a, sensor_b], labels=['Sensor A', 'Sensor B'])
-overall_mean = np.mean(np.concatenate([sensor_a, sensor_b]))
-plt.axhline(overall_mean, color='red', linestyle='--', linewidth=2, label=f'Overall Mean: {overall_mean:.2f}°C')
-plt.xlabel('Sensor')
-plt.ylabel('Temperature (deg C)')
-plt.title('Temperature Distribution Comparison: Box Plot')
-plt.legend()
-plt.grid(True, alpha=0.3, axis='y')
+fig, ax = plt.subplots(figsize=(10, 6))
+plot_boxplot(sensor_a, sensor_b, ax)
 plt.savefig('box_plot.png', dpi=300, bbox_inches='tight')
 plt.close()
 
-print("Plots generated and saved successfully!") 
+print("Plots generated and saved successfully!")

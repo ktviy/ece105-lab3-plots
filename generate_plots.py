@@ -147,9 +147,9 @@ def main():
     """Generate and save publication-quality sensor data visualizations.
     
     Generates synthetic temperature sensor data and creates a composite figure
-    containing three subplots: a scatter plot of readings over time, a histogram
-    of the temperature distributions, and a box plot comparing the two sensors.
-    The figure is saved as a single PNG file.
+    containing four subplots: a scatter plot of readings over time, a histogram
+    of the temperature distributions, a box plot comparing the two sensors, and
+    a summary statistics panel. The figure is saved as a single PNG file.
     
     Returns
     -------
@@ -158,17 +158,40 @@ def main():
     # Generate synthetic data for two sensors and timestamps
     sensor_a, sensor_b, timestamps = generate_data(seed=6942)
     
-    # Create a 1x3 subplot figure
-    fig, axes = plt.subplots(1, 3, figsize=(18, 5))
+    # Create a 2x2 subplot figure
+    fig, axes = plt.subplots(2, 2, figsize=(14, 10))
     
-    # Generate and populate scatter plot
-    plot_scatter(sensor_a, sensor_b, timestamps, axes[0])
+    # Generate and populate scatter plot (top-left)
+    plot_scatter(sensor_a, sensor_b, timestamps, axes[0, 0])
     
-    # Generate and populate histogram
-    plot_histogram(sensor_a, sensor_b, axes[1])
+    # Generate and populate histogram (top-right)
+    plot_histogram(sensor_a, sensor_b, axes[0, 1])
     
-    # Generate and populate box plot
-    plot_boxplot(sensor_a, sensor_b, axes[2])
+    # Generate and populate box plot (bottom-left)
+    plot_boxplot(sensor_a, sensor_b, axes[1, 0])
+    
+    # Add summary statistics (bottom-right)
+    ax_stats = axes[1, 1]
+    ax_stats.axis('off')
+    
+    stats_text = (
+        f"Summary Statistics\n\n"
+        f"Sensor A:\n"
+        f"  Mean: {sensor_a.mean():.2f}°C\n"
+        f"  Std Dev: {sensor_a.std():.2f}°C\n"
+        f"  Min: {sensor_a.min():.2f}°C\n"
+        f"  Max: {sensor_a.max():.2f}°C\n\n"
+        f"Sensor B:\n"
+        f"  Mean: {sensor_b.mean():.2f}°C\n"
+        f"  Std Dev: {sensor_b.std():.2f}°C\n"
+        f"  Min: {sensor_b.min():.2f}°C\n"
+        f"  Max: {sensor_b.max():.2f}°C\n\n"
+        f"Combined:\n"
+        f"  Overall Mean: {np.mean(np.concatenate([sensor_a, sensor_b])):.2f}°C"
+    )
+    ax_stats.text(0.1, 0.95, stats_text, transform=ax_stats.transAxes,
+                  fontsize=11, verticalalignment='top', fontfamily='monospace',
+                  bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
     
     # Adjust layout and save
     plt.tight_layout()
